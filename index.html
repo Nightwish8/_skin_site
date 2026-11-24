@@ -89,7 +89,7 @@ fetch("players.json", { cache: "no-cache" })
         const tex = prof.textures || {};
         const id = tex["default"] || tex["slim"];
         if (!id) throw new Error("no skin");
-        img.src = "textures/" + id;
+        img.src = "csl/textures/" + id;
         src.textContent = tex["slim"] ? "slim" : "classic";
       } catch (e) {
         img.src = "data:,";

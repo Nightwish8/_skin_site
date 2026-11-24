@@ -24,10 +24,10 @@ if ($Nick -notmatch '^[A-Za-z0-9_]{3,16}$') {
 }
 
 $site    = Split-Path -Parent $PSScriptRoot
-$texDir  = Join-Path $site 'textures'
 $cslDir  = Join-Path $site 'csl'
+$texDir  = Join-Path $cslDir 'textures'
 $players = Join-Path $site 'players.json'
-New-Item -ItemType Directory -Path $texDir, $cslDir -Force | Out-Null
+New-Item -ItemType Directory -Path $texDir -Force | Out-Null
 
 function Get-ImageSize([string]$Path) {
     $full = (Resolve-Path -LiteralPath $Path).Path
