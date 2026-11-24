@@ -48,6 +48,10 @@ function Add-Texture([string]$Path) {
 }
 
 # --- skin ---
+$ext = [System.IO.Path]::GetExtension($Skin).ToLowerInvariant()
+if ($ext -eq '.webp') {
+    throw "WebP is not usable here: CustomSkinLoader needs PNG, and Windows cannot read WebP without extra codecs. Save the image as PNG first (any browser: right click -> Save image as -> PNG; or Paint -> Save as -> PNG)."
+}
 $s = Get-ImageSize $Skin
 if ($s.Width -ne $s.Height) { throw "Skin must be square, got $($s.Width)x$($s.Height)." }
 if (($s.Width % 64) -ne 0 -or $s.Width -lt 64 -or $s.Width -gt 1024) {

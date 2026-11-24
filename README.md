@@ -1,5 +1,7 @@
 # Скины сервера — статический сайт для CustomSkinLoader
 
+Текущий адрес: **https://nightwish8.github.io/_skin_site/** (источник для CSL — `.../_skin_site/csl/`).
+
 Это готовый сайт скинов по спецификации **CustomSkinAPI R2**, который CustomSkinLoader (CSL) умеет читать.
 Хостится бесплатно на GitHub Pages, сервер Minecraft не участвует вообще.
 
