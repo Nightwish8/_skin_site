@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Скины сервера</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; padding: 40px 20px 60px;
+    font: 16px/1.5 "Segoe UI", system-ui, sans-serif;
+    background: radial-gradient(1200px 700px at 50% -10%, #24304a 0%, #0e1118 55%, #0a0c11 100%);
+    color: #e8ecf4;
+  }
+  h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: .3px; }
+  .sub { color: #90a0bd; margin: 0 0 28px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; max-width: 980px; margin: 0 auto; }
+  .card {
+    width: 200px; padding: 18px; border-radius: 16px; text-align: center;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  .card img {
+    width: 128px; height: 256px; object-fit: contain; image-rendering: pixelated;
+    border-radius: 8px; background: rgba(255,255,255,.03);
+  }
+  .card .name { margin-top: 10px; font-weight: 600; font-size: 18px; }
+  .card .src { color: #7d8aa5; font-size: 12px; margin-top: 2px; word-break: break-all; }
+  .missing { opacity: .45; }
+  .box {
+    max-width: 720px; margin: 36px auto 0; padding: 18px 20px; border-radius: 14px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+  }
+  .box h2 { font-size: 16px; margin: 0 0 10px; color: #b9c6dd; }
+  code, .url {
+    font-family: Consolas, "Cascadia Mono", monospace; font-size: 14px;
+    background: rgba(0,0,0,.35); padding: 3px 7px; border-radius: 6px; word-break: break-all;
+  }
+  .url { display: block; padding: 10px 12px; margin: 8px 0 0; color: #9fd2ff; }
+  ol { margin: 8px 0 0; padding-left: 22px; color: #c3ccdd; }
+  li { margin: 4px 0; }
+  a { color: #8fc7ff; }
+</style>
+</head>
+<body>
+  <h1>Скины сервера</h1>
+  <p class="sub">Источник скинов для CustomSkinLoader. Ники не меняются — скин привязан к ним.</p>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="box">
+    <h2>Адрес для клиентов (CustomSkinLoader)</h2>
+    <code class="url" id="root">…</code>
+    <p style="color:#8b98b3;margin:10px 0 0;font-size:14px">
+      Прописать в <code>.minecraft/CustomSkinLoader/CustomSkinLoader.json</code> первым в <code>loadlist</code>.
+    </p>
+  </div>
+
+  <div class="box">
+    <h2>Обновить скин</h2>
+    <ol>
+      <li>Админ получает PNG: 64×64, 128×128 или 256×256 (квадрат, кратный 64), кейп 64×32.</li>
+      <li>Запускает <code>tools\add-skin.ps1 -Nick ник -Skin путь\skin.png</code>.</li>
+      <li>Коммитит и пушит изменения в репозиторий — игроки перезаходят в клиент.</li>
+    </ol>
+  </div>
+
+<script>
+const root = location.origin + location.pathname.replace(/index\.html$/, "").replace(/\/?$/, "/") + "csl/";
+document.getElementById("root").textContent = root;
+
+fetch("players.json", { cache: "no-cache" })
+  .then(r => r.json())
+  .then(async names => {
+    const grid = document.getElementById("grid");
+    for (const name of names) {
+      const card = document.createElement("div");
+      card.className = "card";
+      const img = document.createElement("img");
+      img.alt = name;
+      const title = document.createElement("div");
+      title.className = "name";
+      title.textContent = name;
+      const src = document.createElement("div");
+      src.className = "src";
+      try {
+        const prof = await fetch("csl/" + encodeURIComponent(name) + ".json", { cache: "no-cache" }).then(r => r.json());
+        const tex = prof.textures || {};
+        const id = tex["default"] || tex["slim"];
+        if (!id) throw new Error("no skin");
+        img.src = "textures/" + id;
+        src.textContent = tex["slim"] ? "slim" : "classic";
+      } catch (e) {
+        img.src = "data:,";
+        card.classList.add("missing");
+        src.textContent = "скин не задан";
+      }
+      card.append(img, title, src);
+      grid.appendChild(card);
+    }
+  })
+  .catch(e => {
+    document.getElementById("grid").textContent = "Не удалось загрузить players.json";
+  });
+</script>
+</body>
+</html>
